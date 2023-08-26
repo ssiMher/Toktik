@@ -2,19 +2,25 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 // FavoriteAction no practical effect, just check if token is valid
 func FavoriteAction(c *gin.Context) {
-	token := c.Query("token")
+	//token := c.Query("token")
 	video_id := c.Query("video_id")
 	action_type := c.Query("action_type")
+	id, ok := c.Get("Id")
+	if ok {
+		id = id.(int64)
+	}
 
 	var user User
-	db.Where("token = ?", token).First(&user)
+	db.Where("Id = ?", id).First(&user)
+
+	//var user User
+	//db.Where("token = ?", token).First(&user)
 	if user.Id == 0 {
 		//用户不存在
 		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
@@ -51,18 +57,12 @@ func FavoriteAction(c *gin.Context) {
 		return
 	}
 
-	/*if _, exist := usersLoginInfo[token]; exist {
-		c.JSON(http.StatusOK, Response{StatusCode: 0})
-	} else {
-		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
-	}*/
 }
 
 // FavoriteList all users have same favorite video list
 func FavoriteList(c *gin.Context) {
 	//latest_time := c.DefaultQuery("latest_time", fmt.Sprintf("%d", (time.Now().Unix())))
 	user_id := c.Query("user_id")
-	//TODO 鉴权
 	var user User
 	db.Where("id = ?", user_id).First(&user)
 	var videos []Video
@@ -70,16 +70,17 @@ func FavoriteList(c *gin.Context) {
 		var ids []int64
 		json.Unmarshal([]byte(user.FavoritedVideos), &ids)
 		db.Where("id IN (?)", ids).Preload("Author").Find(&videos)
+		for _, v := range videos {
+			v.IsFavorite = true
+			db.Save(&v)
+		}
 	} else {
 		// 数组为空时,直接返回空视频数组
 		videos = []Video{}
 	}
 	//db.Where("id IN ?", user.FavoritedVideos).Find(&videos)
 
-	for _, v := range videos {
-		v.IsFavorite = true
-	}
-	fmt.Println(videos)
+	//fmt.Println(videos)
 	c.JSON(http.StatusOK, FeedResponse{
 		Response:  Response{StatusCode: 0},
 		VideoList: videos,

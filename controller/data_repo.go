@@ -9,7 +9,7 @@ import (
 var db *gorm.DB
 
 func Init() {
-	NgrokHost = "https://15e4-111-49-156-134.ngrok-free.app"
+	NgrokHost = "https://d24a-111-49-156-134.ngrok-free.app"
 	dsn := "root:123456@(127.0.0.1:3306)/db1?charset=utf8mb4&parseTime=True&loc=Local"
 	var err error
 	db, err = gorm.Open("mysql", dsn)
@@ -24,6 +24,7 @@ func Init() {
 	db.AutoMigrate(&User{})
 	db.AutoMigrate(&Video{})
 	db.AutoMigrate(&Comment{})
+	db.AutoMigrate(&Message{})
 }
 
 func removeVideoID(slice []int64, id int64) []int64 {

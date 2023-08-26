@@ -14,11 +14,15 @@ type VideoListResponse struct {
 
 // Publish check token then save upload file to public directory
 func Publish(c *gin.Context) {
-	token := c.PostForm("token")
+	//token := c.PostForm("token")
+	id, ok := c.Get("Id")
+	if ok {
+		id = id.(int64)
+	}
 
 	var user User
-	db.Where("token = ?", token).First(&user)
-	fmt.Println(user)
+	db.Where("Id = ?", id).First(&user)
+	fmt.Println("id = ", id, user)
 	if user.Id == 0 {
 		//用户不存在
 		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})

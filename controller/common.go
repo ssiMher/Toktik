@@ -9,11 +9,13 @@ type Response struct {
 
 type User struct {
 	//Id            int64  `json:"id,omitempty"`
-	Id int64 `json:"id,omitempty" gorm:"primary_key;auto_increment"`
-	//Id            int64  `json:"-" gorm:"primary_key;auto_increment"`
-	Name            string `json:"name,omitempty"`
-	FollowCount     int64  `json:"follow_count,omitempty"`
+	Id          int64  `json:"id,omitempty" gorm:"primary_key;auto_increment"`
+	Name        string `json:"name,omitempty"`
+	FollowCount int64  `json:"follow_count,omitempty"`
+	Follows     string `json:"follows,omitempty" gorm:"type:text;"`
+	//Followws        []*User `gorm:"many2many:follows;"`
 	FollowerCount   int64  `json:"follower_count,omitempty"`
+	Followers       string `json:"followers,omitempty" gorm:"type:text;"`
 	IsFollow        bool   `json:"is_follow,omitempty"`
 	Password        string `json:"password,omitempty"`
 	Token           string `json:"token,omitempty"`
@@ -70,9 +72,12 @@ type Comment struct {
 }
 
 type Message struct {
-	Id         int64  `json:"id,omitempty"`
+	Id         int64  `json:"id,omitempty" gorm:"primary_key;auto_increment"`
+	ToUserId   int64  `json:"to_user_id,omitempty"`
+	FromUserId int64  `json:"from_user_id,omitempty"`
 	Content    string `json:"content,omitempty"`
-	CreateTime string `json:"create_time,omitempty"`
+	//CreateTime string `json:"create_time,omitempty"`
+	CreateTime int64 `json:"create_time,omitempty"`
 }
 
 type MessageSendEvent struct {

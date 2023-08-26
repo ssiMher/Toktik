@@ -19,7 +19,7 @@ type CommentActionResponse struct {
 
 // CommentAction no practical effect, just check if token is valid
 func CommentAction(c *gin.Context) {
-	token := c.Query("token")
+	//token := c.Query("token")
 	actionType := c.Query("action_type")
 	video_id := c.Query("video_id")
 	var video Video
@@ -29,8 +29,15 @@ func CommentAction(c *gin.Context) {
 		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "Video doesn't exist"})
 		return
 	}
+	id, ok := c.Get("Id")
+	if ok {
+		id = id.(int64)
+	}
+
 	var user User
-	db.Where("token = ?", token).First(&user)
+	db.Where("Id = ?", id).First(&user)
+	//var user User
+	//db.Where("token = ?", token).First(&user)
 	if user.Id == 0 {
 		//用户不存在
 		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})

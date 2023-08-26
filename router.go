@@ -10,7 +10,7 @@ import (
 func initRouter(r *gin.Engine) {
 	// public directory is used to serve static resources
 	r.Static("/static", "./public")
-
+	r.Use(controller.JWTAuthMiddleware())
 	apiRouter := r.Group("/douyin")
 
 	// basic apis
